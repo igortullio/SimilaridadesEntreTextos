@@ -74,7 +74,7 @@ def n_palavras_diferentes(lista_palavras):
 def compara_assinatura(as_a, as_b):    
     somatorio = 0
     for i in range(len(as_a)):
-        somatorio += abs(as_a[i]) - abs(as_b[i])
+        somatorio += abs(as_a[i] - as_b[i])
 
     return somatorio / 6
         
@@ -82,20 +82,24 @@ def compara_assinatura(as_a, as_b):
 def calcula_assinatura(texto):    
     sentencas = separa_sentencas(texto)
     num_sentencas = 0
+    soma_car_sentencas = 0
 
     frases = []
     for i in range(len(sentencas)):
         frase_aux = separa_frases(sentencas[i])
         frases.append(frase_aux)
         num_sentencas += 1
+        soma_car_sentencas = soma_car_sentencas + len(sentencas[i])
 
     palavras = []
     num_frases = 0
+    soma_car_frases = 0
     for linha in range(len(frases)):
         for coluna in range(len(frases[linha])):
             palavras_aux = separa_palavras(frases[linha][coluna])
             palavras.append(palavras_aux)
             num_frases += 1
+            soma_car_frases += len(frases[linha][coluna])
 
     mtrx_para_lista = []
     #COLOCA O QUE ESTÁ NA EM MATRIZ PARA UMA LISTA
@@ -114,22 +118,16 @@ def calcula_assinatura(texto):
     tamMedPalavra = total_letras / num_tot_palavras
     typeToken = n_palavras_diferentes(palavras) / num_tot_palavras
     hapaxLegomana = n_palavras_unicas(palavras) / num_tot_palavras
-    tamMedSentenca = total_letras / num_sentencas
+    tamMedSentenca = soma_car_sentencas / num_sentencas
     comMedSentenca = num_frases / num_sentencas
-    tamMedFrase = total_letras / num_frases
+    tamMedFrase = soma_car_frases / num_frases
     
     return [tamMedPalavra, typeToken, hapaxLegomana, tamMedSentenca, comMedSentenca, tamMedFrase]
 
 
 
-def avalia_textos(textos, ass_cp):
+def avalia_textos(textos, assinaturaMain):
     '''IMPLEMENTAR. Essa funcao recebe uma lista de textos e deve devolver o numero (1 a n) do texto com maior probabilidade de ter sido infectado por COH-PIAH.'''
-    pass
-
-'''Minhas funções'''
-def main():
-    assinaturaMain = le_assinatura()
-    textos = le_textos()
 
     assinaturas = []
     for i in textos:
@@ -137,7 +135,7 @@ def main():
 
     similaridade = []
     for i in assinaturas:
-        similaridade.append(compara_assinatura(assinaturaMain, i))    
+        similaridade.append(compara_assinatura(assinaturaMain, i))
 
     maior = similaridade[0]
     posicao = 0
@@ -145,15 +143,12 @@ def main():
         if similaridade[i] > maior:
             maior = similaridade[i]
             posicao = i
+
+    return posicao
+
+'''Minhas funções'''
+def main():
+    assinaturaMain = le_assinatura()
+    textos = le_textos()
     
-    return print("O autor do texto " , posicao+1, " está infectado com COH-PIAH")
-
-main()
-
-
-
-
-
-
-
-    
+    return  print("O autor do texto " , avalia_textos(textos, assinaturaMain), " está infectado com COH-PIAH")
